@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+$app = require __DIR__ . '/bootstrap/app.php';
+$command = $argv[1] ?? 'help';
+try {
+    switch ($command) {
+        case 'serve':
+            $port = $argv[2] ?? '8000';
+            if (!ctype_digit($port) || (int) $port < 1 || (int) $port > 65535) { throw new InvalidArgumentException('Port harus antara 1 dan 65535.'); }
+            echo "TajdidCore tersedia di http://127.0.0.1:$port\n";
+            passthru(escapeshellarg(PHP_BINARY) . ' -S ' . escapeshellarg('127.0.0.1:' . $port) . ' -t ' . escapeshellarg(__DIR__ . '/public') . ' ' . escapeshellarg(__DIR__ . '/public/router.php'), $code);
+            exit($code);
+        case 'routes':
+            foreach ($app->router->routes() as $route) { printf("%-7s %s\n", $route->method, $route->path); }
+            break;
+        case 'make:action':
+            $name = $argv[2] ?? '';
+            if (!preg_match('/^[A-Z][a-zA-Z0-9]*$/D', $name)) { throw new InvalidArgumentException('Contoh: php tajdid make:action ShowArticle'); }
+            $file = __DIR__ . '/app/Actions/' . $name . '.php';
+            $handle = @fopen($file, 'x');
+            if (!$handle) { throw new RuntimeException('Action sudah ada atau direktori tidak dapat ditulis.'); }
+            $source = "<?php\ndeclare(strict_types=1);\nnamespace App\\Actions;\nuse Tajdid\\Core\\Http\\Response;\nfinal class $name\n{\n    public function __invoke(): Response\n    {\n        return Response::json(['message' => '$name']);\n    }\n}\n";
+            fwrite($handle, $source);
+            fclose($handle);
+            echo "Dibuat: app/Actions/$name.php\n";
+            break;
+        case 'test':
+            require __DIR__ . '/tests/run.php';
+            break;
+        case 'help':
+            echo "TajdidCore 0.1.0\n\nphp tajdid serve [port]       Jalankan server lokal\nphp tajdid routes             Tampilkan rute\nphp tajdid make:action Nama    Buat action\nphp tajdid test               Jalankan pengujian\n";
+            break;
+        default:
+            throw new InvalidArgumentException("Perintah tidak dikenal: $command");
+    }
+} catch (Throwable $exception) { fwrite(STDERR, $exception->getMessage() . "\n"); exit(1); }
