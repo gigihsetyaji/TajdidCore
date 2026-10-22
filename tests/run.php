@@ -28,7 +28,8 @@ check($app->handle(new Request('GET', '/missing'))->status === 404, '404 respons
 $response = $app->handle(new Request('POST', '/health'));
 check($response->status === 405 && $response->headers['Allow'] === 'GET, HEAD', '405 and allowed methods');
 check($app->handle(new Request('HEAD', '/health'))->status === 200, 'HEAD fallback');
-$response = $app->handle(new Request('POST', '/api/echo', ['name' => 'query'], ['name' => 'body']));
+$app->router->post('/test/echo', static fn (Request $request): array => ['data' => $request->all()]);
+$response = $app->handle(new Request('POST', '/test/echo', ['name' => 'query'], ['name' => 'body']));
 check(json_decode($response->body, true)['data']['name'] === 'body', 'Body precedence and injected request');
 $container = new Container();
 $container->bind(stdClass::class, fn () => new stdClass(), true);
@@ -46,6 +47,7 @@ try { (new View(dirname(__DIR__) . '/views'))->render('../config/app'); throw ne
 catch (InvalidArgumentException) { check(true, 'View traversal rejected'); }
 $config = new Config(['app' => ['debug' => false]]);
 check($config->get('app.debug', true) === false && $config->get('missing', 42) === 42, 'Config defaults');
+require __DIR__ . '/security.php';
 if (in_array('sqlite', PDO::getAvailableDrivers(), true)) {
     $db = new Connection(new Config(['database' => ['dsn' => 'sqlite::memory:']]));
     $db->execute('CREATE TABLE notes (id INTEGER PRIMARY KEY, title TEXT)');
@@ -54,5 +56,6 @@ if (in_array('sqlite', PDO::getAvailableDrivers(), true)) {
     try { $db->transaction(function (Connection $db) { $db->execute('DELETE FROM notes'); throw new RuntimeException('rollback'); }); }
     catch (RuntimeException) {}
     check(count($db->select('SELECT * FROM notes')) === 1, 'Transaction rollback');
+    require __DIR__ . '/database.php';
 } else { echo "SKIP: SQLite tests (pdo_sqlite belum tersedia)\n"; }
 echo "PASS: $tests checks\n";

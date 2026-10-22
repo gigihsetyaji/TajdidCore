@@ -5,5 +5,5 @@
   "license": "MIT",
   "require": {"php": ">=8.4", "ext-json": "*", "ext-pdo": "*"},
   "autoload": {"psr-4": {"Tajdid\\Core\\": "src/", "App\\": "app/"}},
-  "scripts": {"test": "php tests/run.php", "serve": "php tajdid serve"}
+  "scripts": {"test": ["@php tests/run.php", "@php tests/http.php"], "serve": "php tajdid serve"}
 }

@@ -25,11 +25,18 @@ try {
             fclose($handle);
             echo "Dibuat: app/Actions/$name.php\n";
             break;
+        case 'migrate':
+            $migrator = $app->container->get(Tajdid\Core\Database\Migrator::class);
+            $applied = $migrator->migrate(__DIR__ . '/database/migrations');
+            foreach ($applied as $name) { echo "Applied: $name\n"; }
+            echo count($applied) . " migration(s) applied\n";
+            break;
         case 'test':
             require __DIR__ . '/tests/run.php';
+            require __DIR__ . '/tests/http.php';
             break;
         case 'help':
-            echo "TajdidCore 0.2.0\n\nphp tajdid serve [port]       Jalankan server lokal\nphp tajdid routes             Tampilkan rute\nphp tajdid make:action Nama    Buat action\nphp tajdid test               Jalankan pengujian\n";
+            echo "TajdidCore 0.3.0\n\nphp tajdid serve [port]       Jalankan server lokal\nphp tajdid routes             Tampilkan rute\nphp tajdid make:action Nama    Buat action\nphp tajdid migrate            Jalankan migrasi database\nphp tajdid test               Jalankan pengujian\n";
             break;
         default:
             throw new InvalidArgumentException("Perintah tidak dikenal: $command");

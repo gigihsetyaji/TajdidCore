@@ -48,6 +48,15 @@ final class Container
         $arguments = [];
         foreach ($method->getParameters() as $parameter) {
             $type = $parameter->getType();
+            if ($type !== null && !$type instanceof ReflectionNamedType) {
+                throw new RuntimeException('Union/intersection types require an explicit factory: $' . $parameter->getName());
+            }
+            if ($parameter->isVariadic()) {
+                $values = $parameters[$parameter->getName()] ?? [];
+                if (!is_array($values)) { throw new RuntimeException('Variadic arguments must be an array'); }
+                array_push($arguments, ...array_values($values));
+                continue;
+            }
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) { $arguments[] = $this->get($type->getName()); }
             elseif (array_key_exists($parameter->getName(), $parameters)) { $arguments[] = $parameters[$parameter->getName()]; }
             elseif ($parameter->isDefaultValueAvailable()) { $arguments[] = $parameter->getDefaultValue(); }

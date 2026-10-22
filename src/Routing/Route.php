@@ -4,6 +4,7 @@ namespace Tajdid\Core\Routing;
 final class Route
 {
     public array $middleware = [];
+    public ?string $routeName = null;
     public readonly string $pattern;
     public readonly array $parameters;
     public function __construct(public readonly string $method, public readonly string $path, public readonly mixed $handler)
@@ -20,6 +21,12 @@ final class Route
         }
         $this->pattern = '~^' . $pattern . '$~D';
         $this->parameters = $parameters;
+    }
+    public function name(string $name): self
+    {
+        if (!preg_match('/^[a-zA-Z0-9_.-]+$/D', $name)) { throw new \InvalidArgumentException('Invalid route name'); }
+        $this->routeName = $name;
+        return $this;
     }
     public function through(string ...$middleware): self { $this->middleware = array_merge($this->middleware, $middleware); return $this; }
 }
