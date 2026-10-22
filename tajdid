@@ -29,7 +29,7 @@ try {
             require __DIR__ . '/tests/run.php';
             break;
         case 'help':
-            echo "TajdidCore 0.1.0\n\nphp tajdid serve [port]       Jalankan server lokal\nphp tajdid routes             Tampilkan rute\nphp tajdid make:action Nama    Buat action\nphp tajdid test               Jalankan pengujian\n";
+            echo "TajdidCore 0.2.0\n\nphp tajdid serve [port]       Jalankan server lokal\nphp tajdid routes             Tampilkan rute\nphp tajdid make:action Nama    Buat action\nphp tajdid test               Jalankan pengujian\n";
             break;
         default:
             throw new InvalidArgumentException("Perintah tidak dikenal: $command");

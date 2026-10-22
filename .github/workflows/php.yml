@@ -1,0 +1,23 @@
+name: PHP compatibility
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - run: composer validate --strict
+      - name: Check PHP syntax
+        run: find src app bootstrap config routes views public tests -name '*.php' -exec php -l {} \; && php -l tajdid
+      - name: Test with warnings and deprecations treated as errors
+        run: php -d error_reporting=-1 tests/run.php

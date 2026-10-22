@@ -8,11 +8,13 @@ Dengan mengedepankan prinsip efisiensi, keterbukaan, skalabilitas, serta kemudah
 
 **TajdidCore — Building Technology, Inspiring Progress.**
 
-TajdidCore adalah fondasi framework PHP 8.2+ untuk membangun aplikasi web. Versi awal **0.1.0** menyediakan routing, dependency injection, middleware, request/response, view PHP, konfigurasi, database PDO, dan CLI.
+TajdidCore adalah fondasi framework PHP 8.4+ untuk membangun aplikasi web. Versi **0.2.0** menyediakan routing, dependency injection, middleware, request/response, view PHP, konfigurasi, database PDO, dan CLI.
 
 Terinspirasi kenyamanan framework seperti Laravel, TajdidCore memakai action invokable dan komposisi objek yang eksplisit: tidak memiliki facade global, Artisan, Blade, atau Eloquent. Framework dan aplikasi contoh berada dalam satu proyek agar mudah dipelajari dan dikembangkan.
 
 ## Mulai
+
+Gunakan PHP 8.4 atau lebih baru dengan ekstensi JSON dan PDO. Untuk database SQLite bawaan, aktifkan juga `pdo_sqlite`. Composer dan bootstrap akan menolak PHP di bawah 8.4.
 
 ```sh
 php tajdid serve
@@ -127,6 +129,8 @@ $db->transaction(function ($db) {
 Gunakan binding untuk nilai input. Transaksi bersarang belum didukung. Schema/migrasi, ORM, session, CSRF, autentikasi, validasi, queue, dan cache belum termasuk versi ini; siapkan komponen tersebut sebelum memakai framework untuk aplikasi produksi yang membutuhkannya.
 
 ## Pemeriksaan
+
+CI menjalankan pengujian dan pemeriksaan sintaks pada PHP 8.4 dan 8.5 dengan `pdo_sqlite`. Pengujian CI mengubah warning dan deprecation PHP menjadi kegagalan agar masalah kompatibilitas terdeteksi.
 
 ```sh
 php tajdid test

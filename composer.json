@@ -3,7 +3,7 @@
   "description": "TajdidCore: a small, explicit PHP application framework",
   "type": "project",
   "license": "MIT",
-  "require": {"php": ">=8.2", "ext-json": "*", "ext-pdo": "*"},
+  "require": {"php": ">=8.4", "ext-json": "*", "ext-pdo": "*"},
   "autoload": {"psr-4": {"Tajdid\\Core\\": "src/", "App\\": "app/"}},
   "scripts": {"test": "php tests/run.php", "serve": "php tajdid serve"}
 }
